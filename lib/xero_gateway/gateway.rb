@@ -531,6 +531,54 @@ module XeroGateway
     end
 
     #
+    # Gets all users for a specific organisation in Xero
+    #
+    # Usage : get_users
+    #         get_users(:where => "Filter expression")
+    #         get_users(:modified_since => Time)
+    #
+    # Note  : modified_since is in UTC format (i.e. Brisbane is UTC+10)
+    #         Filter expressions examples: http://developer.xero.com/documentation/getting-started/http-requests-and-responses/#title4
+    #
+    def get_users(options = {})
+      response_xml = http_get(@client, "#{xero_url}/Users")
+
+      request_params = {}
+
+      request_params[:UserID]        = options[:user_id] if options[:user_id]
+      request_params[:ModifiedAfter] = options[:modified_since] if options[:modified_since]
+      request_params[:where]         = options[:where] if options[:where]
+      request_params[:order]         = options[:order] if options[:order]
+
+      response_xml = http_get(@client, "#{@xero_url}/Users", request_params)
+      parse_response(response_xml, {:request_params => request_params}, {:request_signature => 'GET/users'})
+
+    end
+
+    #
+    # Gets a single user, by their Xero user ID / UUID
+    #
+    # Usage : get_user("297c2dc5-cc47-4afd-8ec8-74990b8761e9")
+    #
+    def get_user(user_id)
+      request_params = { :UserID => user_id }
+      response_xml = http_get(@client, "#{@xero_url}/Users/#{URI.escape(user_id)}", request_params)
+
+      parse_response(response_xml, {:request_params => request_params}, {:request_signature => 'GET/user'})
+    end
+
+    #
+    # Gets a single user, by their email address
+    #
+    # Usage : get_user_by_email("name@example.com")
+    #
+    def get_user_by_email(email)
+      where_statement = %(EmailAddress=="#{email}")
+      get_users(:where => where_statement)
+    end
+
+
+    #
     # Create Payment record in Xero
     #
     def create_payment(payment)
@@ -699,6 +747,7 @@ module XeroGateway
           when "Organisations" then response.response_item = Organisation.from_xml(element.children.first) # Xero only returns the Authorized Organisation
           when "TrackingCategories" then element.children.each {|child| response.response_item << TrackingCategory.from_xml(child) }
           when "Errors" then response.errors = element.children.map { |error| Error.parse(error) }
+          when "Users" then element.children.each {|child| response.response_item << User.from_xml(child) }
         end
       end if response_element
 

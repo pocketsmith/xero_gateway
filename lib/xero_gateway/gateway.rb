@@ -592,6 +592,22 @@ module XeroGateway
       parse_response(response_xml, {:request_xml => request_xml}, {:request_signature => 'PUT/payments'})
     end
 
+
+    #
+    # Create Receipt record in Xero
+    #
+    def create_receipt(receipt)
+      b = Builder::XmlMarkup.new
+
+      request_xml = b.Receipts do
+        receipt.to_xml(b)
+      end
+
+      response_xml = http_put(@client, "#{xero_url}/Receipts", request_xml)
+      parse_response(response_xml, {:request_xml => request_xml}, {:request_signature => 'PUT/payments'})
+    end
+
+
     private
 
     def get_contact(contact_id = nil, contact_number = nil)

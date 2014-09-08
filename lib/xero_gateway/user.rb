@@ -28,9 +28,7 @@ module XeroGateway
       return true
     end
 
-    def to_xml
-      b = Builder::XmlMarkup.new
-
+    def to_xml(b = Builder::XmlMarkup.new)
       b.User do
         ATTRS.keys.each do |attr|
           eval("b.#{attr} '#{self.send(attr.underscore.to_sym)}'")
@@ -49,7 +47,6 @@ module XeroGateway
 
           case (ATTRS[attribute])
             when :boolean then  user.send("#{underscored_attribute}=", (element.text == "true"))
-            when :float   then  user.send("#{underscored_attribute}=", element.text.to_f)
             else                user.send("#{underscored_attribute}=", element.text)
           end
 

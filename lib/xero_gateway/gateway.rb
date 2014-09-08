@@ -604,7 +604,7 @@ module XeroGateway
       end
 
       response_xml = http_put(@client, "#{xero_url}/Receipts", request_xml)
-      parse_response(response_xml, {:request_xml => request_xml}, {:request_signature => 'PUT/payments'})
+      parse_response(response_xml, {:request_xml => request_xml}, {:request_signature => 'POST/receipt'})
     end
 
 

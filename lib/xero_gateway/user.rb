@@ -31,7 +31,10 @@ module XeroGateway
     def to_xml(b = Builder::XmlMarkup.new)
       b.User do
         ATTRS.keys.each do |attr|
-          eval("b.#{attr} '#{self.send(attr.underscore.to_sym)}'")
+          attr_value = self.send(attr.underscore.to_sym)
+          unless attr_value.nil? || attr_value == ""
+            eval("b.#{attr} '#{self.send(attr.underscore.to_sym)}'")
+          end
         end
       end
     end

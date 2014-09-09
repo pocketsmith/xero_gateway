@@ -7,8 +7,125 @@ class GatewayTest < Test::Unit::TestCase
     @gateway = XeroGateway::Gateway.new(CONSUMER_KEY, CONSUMER_SECRET)
   end
 
-  context "with error handling" do
+  context "GET methods" do
+    should :get_invoices do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("invoices.xml"), :code => "200"))
+      result = @gateway.get_invoices
+      assert result.response_item.first.is_a? XeroGateway::Invoice
+    end
 
+    should :get_invoice do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("invoice.xml"), :code => "200"))
+      result = @gateway.get_invoice('a99a9aaa-9999-99a9-9aa9-aaaaaa9a9999')
+      assert result.response_item.is_a? XeroGateway::Invoice
+    end
+
+    should :get_credit_notes do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("credit_notes.xml"), :code => "200"))
+      result = @gateway.get_credit_notes
+      assert result.response_item.first.is_a? XeroGateway::CreditNote
+    end
+
+    should :get_credit_note do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("credit_notes.xml"), :code => "200"))
+      result = @gateway.get_credit_note('a2b4370d-efd2-440d-894e-082f21d0b10a')
+      assert result.response_item.first.is_a? XeroGateway::CreditNote
+    end
+
+    should :get_bank_transactions do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("bank_transaction.xml"), :code => "200"))
+      result = @gateway.get_bank_transactions
+      assert result.response_item.is_a? XeroGateway::BankTransaction
+    end
+
+    should :get_bank_transaction do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("bank_transactions.xml"), :code => "200"))
+      result = @gateway.get_bank_transaction('c09661a2-a954-4e34-98df-f8b6d1dc9b19')
+      assert result.response_item.is_a? XeroGateway::BankTransaction
+    end
+
+    should :get_manual_journals do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("manual_journals.xml"), :code => "200"))
+      result = @gateway.get_manual_journals
+      assert result.response_item.is_a? XeroGateway::ManualJournal
+    end
+
+    should :get_payments do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("payments.xml"), :code => "200"))
+      result = @gateway.get_payments
+      assert result.response_item.first.is_a? XeroGateway::Payment
+    end
+
+    should :get_contacts do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("contacts.xml"), :code => "200"))
+      result = @gateway.get_contacts
+      assert result.response_item.first.is_a? XeroGateway::Contact
+    end
+
+    should :get_contact_by_id do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("contact.xml"), :code => "200"))
+      result = @gateway.get_contact_by_id('a99a9aaa-9999-99a9-9aa9-aaaaaa9a9999')
+      assert result.response_item.is_a? XeroGateway::Contact
+    end
+
+    should :get_contact_by_number do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("contact.xml"), :code => "200"))
+      result = @gateway.get_contact_by_number('12345')
+      assert result.response_item.is_a? XeroGateway::Contact
+    end
+
+    context :get_report do
+      should "get a BankStatements report" do
+        XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("reports/bank_statement.xml"), :code => "200"))
+        result = @gateway.get_report("BankStatement", bank_account_id: "c09661a2-a954-4e34-98df-f8b6d1dc9b19")
+        assert result.response_item.is_a? XeroGateway::Report
+      end
+
+      should "get a AgedPayablesByContact report" do
+        XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("reports/aged_payables_by_contact.xml"), :code => "200"))
+        result = @gateway.get_report("AgedPayablesByContact", contactID: "c09661a2-a954-4e34-98df-f8b6d1dc9b19")
+        assert result.response_item.is_a? XeroGateway::Report
+      end
+
+      should "get a AgedReceivablesByContact report" do
+        XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("reports/aged_receivables_by_contact.xml"), :code => "200"))
+        result = @gateway.get_report("AgedReceivablesByContact", contactID: "c09661a2-a954-4e34-98df-f8b6d1dc9b19")
+        assert result.response_item.is_a? XeroGateway::Report
+      end
+
+      should "get a BalanceSheet report" do
+        XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("reports/balance_sheet.xml"), :code => "200"))
+        result = @gateway.get_report("BalanceSheet")
+        assert result.response_item.is_a? XeroGateway::Report
+      end
+
+      should "get a BankSummary report" do
+        XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("reports/bank_summary.xml"), :code => "200"))
+        result = @gateway.get_report("BankSummary")
+        assert result.response_item.is_a? XeroGateway::Report
+      end
+
+      should "get a ExecutiveSummary report" do
+        XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("reports/executive_summary.xml"), :code => "200"))
+        result = @gateway.get_report("ExecutiveSummary")
+        assert result.response_item.is_a? XeroGateway::Report
+      end
+
+      should "get a ProfitAndLoss report" do
+        XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("reports/profit_and_loss.xml"), :code => "200"))
+        result = @gateway.get_report("ProfitAndLoss")
+        assert result.response_item.is_a? XeroGateway::Report
+      end
+
+      should "get a TrialBalance report" do
+        XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("reports/trial_balance.xml"), :code => "200"))
+        result = @gateway.get_report("TrialBalance")
+        assert result.response_item.is_a? XeroGateway::Report
+      end
+    end
+  end
+
+  context "with error handling" do
     should "handle token expired" do
       XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("token_expired"), :code => "401"))
 
@@ -86,6 +203,14 @@ class GatewayTest < Test::Unit::TestCase
 
       assert_raises XeroGateway::ManualJournalNotFoundError do
         @gateway.get_manual_journal('unknown-manual-journal-id')
+      end
+    end
+
+    should "handle payments not found" do
+      XeroGateway::OAuth.any_instance.stubs(:get).returns(stub(:plain_body => get_file_as_string("api_exception.xml"), :code => "404"))
+
+      assert_raises XeroGateway::PaymentNotFoundError do
+        @gateway.get_payments
       end
     end
 

@@ -98,7 +98,11 @@ module TestHelper
       data += line
     end
     f.close
-    return data
+    data
+  end
+
+  def get_file(filename)
+    data = File.read( File.dirname(__FILE__) + "/stub_responses/" + filename)
   end
 
   def create_test_bank_transaction(params={}, contact_params={}, line_item_params={})
@@ -115,6 +119,36 @@ module TestHelper
     bank_transaction.bank_account = create_test_account
 
     bank_transaction
+  end
+
+  def create_test_payment(params={}, contact_params={})
+    params = {
+      :payment_id       => 'a99a9aaa-9999-99a9-9aa9-aaaaaa9a9999',
+      :payment_type     => 'ACCRECPAYMENT',
+      :updated_at       => Time.now,
+      :reference        => '12345',
+      :account_id       => 'o99o9ooo-9999-99o9-9oo9-oooooo9o9999',
+      :amount           => 1000.0,
+      :currency_rate    => 1.0,
+      :date             => Date.today.to_time,
+      :invoice_id       => 'i99i9iii-9999-99i9-9ii9-iiiiii9i9999',
+      :invoice_number   => 'INV-0001',
+    }.merge(params)
+    XeroGateway::Payment.new(params)
+  end
+
+  def create_test_report_bank_statement(params={}, body_params={})
+    params = {
+      :report_id        => 'BankStatement',
+      :report_name      => 'BankStatement',
+      :report_type      => 'BankStatement',
+      :report_titles    => [],
+      :report_date      => Date.today,
+      :updated_at       => Time.now-3.days,
+      :column_names     => [],
+      :body             => []
+    }.merge(params)
+    XeroGateway::Report.new(params)
   end
 
   def add_test_line_items(bank_transaction, line_item_params={})

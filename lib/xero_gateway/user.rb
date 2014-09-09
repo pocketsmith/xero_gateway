@@ -8,7 +8,7 @@ module XeroGateway
         "FirstName"        => :string,  # First name of user
         "LastName"         => :string,  # Last name of user
         "UpdatedDateUTC"   => :string,  # Timestamp of last change to user
-        "IsSubscriber"     => :boolean, # Boolean to indicate if user is the subscriber (jrkw: todo)
+        "IsSubscriber"     => :boolean, # Boolean to indicate if user is the subscriber (todo)
         "OrganisationRole" => :string   # User role
       }
     end

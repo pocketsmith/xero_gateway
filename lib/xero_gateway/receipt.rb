@@ -61,11 +61,13 @@ module XeroGateway
 
     # Helper method to fetch the associated contact object. If the contact with :name => receipt_from doesn't exist, a new contact is built
     def contact
+      return nil unless receipt_from
       @contact ||= get_contact_from_receipt_from || build_contact(:name => receipt_from)
     end
 
     def get_contact_from_receipt_from
       return nil unless gateway
+      return nil unless receipt_from
       c = gateway.get_contacts(:where => "name=\"#{receipt_from}\"").response_item
       c.present? ? c : nil
     end
@@ -86,15 +88,15 @@ module XeroGateway
     def to_xml(b = Builder::XmlMarkup.new)
       b.Receipt {
         b.ReceiptID self.receipt_id if self.receipt_id
-        b.ReceiptNumber self.receipt_number if receipt_number
-        b.Date Receipt.format_date(self.date || Date.today)
-        contact.to_xml(b)
+        b.ReceiptNumber self.receipt_number if self.receipt_number
+        b.Date Receipt.format_date(self.date) if self.date
+        contact.to_xml(b) if contact
+        user.to_xml(b) if user
         b.LineItems {
           self.line_items.each do |line_item|
             line_item.to_xml(b)
           end
-        }
-        user.to_xml(b)
+        } if self.line_items.any?
         b.Reference self.reference if self.reference
         b.LineAmountTypes self.line_amount_types if self.line_amount_types
         b.SubTotal self.sub_total if self.sub_total

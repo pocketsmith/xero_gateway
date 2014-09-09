@@ -608,6 +608,21 @@ module XeroGateway
     end
 
 
+    #
+    # Create ExpenseClaim record in Xero
+    #
+    def create_expense_claim(expense_claim)
+      b = Builder::XmlMarkup.new
+
+      request_xml = b.ExpenseClaims do
+        expense_claim.to_xml(b)
+      end
+
+      response_xml = http_put(@client, "#{xero_url}/ExpenseClaims", request_xml)
+      parse_response(response_xml, {:request_xml => request_xml}, {:request_signature => 'POST/receipt'})
+    end
+
+
     private
 
     def get_contact(contact_id = nil, contact_number = nil)

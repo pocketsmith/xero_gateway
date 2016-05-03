@@ -33,7 +33,7 @@ module XeroGateway
         ATTRS.keys.each do |attribute|
           attr_value = self.send(attribute.underscore.to_sym)
           unless attr_value.nil? || attr_value == ""
-            b.send(attribute, attr_value)
+            b.send(attribute, attr_value.to_s)
           end
         end
       end

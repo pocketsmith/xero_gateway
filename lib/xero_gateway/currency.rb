@@ -27,8 +27,8 @@ module XeroGateway
       b = Builder::XmlMarkup.new
       
       b.Currency do
-        ATTRS.keys.each do |attr|
-          eval("b.#{attr} '#{self.send(attr.underscore.to_sym)}'")
+        ATTRS.keys.each do |attribute|
+          b.send(attribute, self.send(attribute.underscore.to_sym).to_s)
         end
       end
     end

@@ -161,16 +161,16 @@ module XeroGateway
           when "Status" then bank_transaction.status = element.text
           when "Reference" then bank_transaction.reference = element.text
           when "LineItems" then element.children.each {|line_item| bank_transaction.line_items_downloaded = true; bank_transaction.line_items << LineItem.from_xml(line_item) }
-          when "Total" then bank_transaction.total = BigDecimal.new(element.text)
-          when "SubTotal" then bank_transaction.sub_total = BigDecimal.new(element.text)
-          when "TotalTax" then bank_transaction.total_tax = BigDecimal.new(element.text)
-          # when "Total" then invoice.total = BigDecimal.new(element.text)
+          when "Total" then bank_transaction.total = BigDecimal(element.text)
+          when "SubTotal" then bank_transaction.sub_total = BigDecimal(element.text)
+          when "TotalTax" then bank_transaction.total_tax = BigDecimal(element.text)
+          # when "Total" then invoice.total = BigDecimal(element.text)
           # when "InvoiceID" then invoice.invoice_id = element.text
           # when "InvoiceNumber" then invoice.invoice_number = element.text
           # when "Payments" then element.children.each { | payment | invoice.payments << Payment.from_xml(payment) }
-          # when "AmountDue" then invoice.amount_due = BigDecimal.new(element.text)
-          # when "AmountPaid" then invoice.amount_paid = BigDecimal.new(element.text)
-          # when "AmountCredited" then invoice.amount_credited = BigDecimal.new(element.text)
+          # when "AmountDue" then invoice.amount_due = BigDecimal(element.text)
+          # when "AmountPaid" then invoice.amount_paid = BigDecimal(element.text)
+          # when "AmountCredited" then invoice.amount_credited = BigDecimal(element.text)
           # when "SentToContact" then invoice.sent_to_contact = (element.text.strip.downcase == "true")
           when "IsReconciled" then bank_transaction.is_reconciled = (element.text.strip.downcase == "true")
           when "Url" then bank_transaction.url = element.text

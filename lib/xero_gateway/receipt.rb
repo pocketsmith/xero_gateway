@@ -121,9 +121,9 @@ module XeroGateway
           when "User" then receipt.user = User.from_xml(element)
           when "Reference" then receipt.reference = element.text
           when "LineAmountTypes" then receipt.line_amount_types = element.text
-          when "SubTotal" then receipt.sub_total = BigDecimal.new(element.text)
-          when "TotalTax" then receipt.total_tax = BigDecimal.new(element.text)
-          when "Total" then receipt.total = BigDecimal.new(element.text)
+          when "SubTotal" then receipt.sub_total = BigDecimal(element.text)
+          when "TotalTax" then receipt.total_tax = BigDecimal(element.text)
+          when "Total" then receipt.total = BigDecimal(element.text)
           when "Status" then receipt.invoice_status = element.text
           when "UpdatedDateUTC" then receipt.updated_date_utc = parse_date(element.text)
           when "HasAttachments" then receipt.has_attachments = element.text

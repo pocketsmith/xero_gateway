@@ -77,9 +77,9 @@ module XeroGateway
           when "ExpenseClaimID" then expense_claim.expense_claim_id = element.text
           when "Status" then expense_claim.status = element.text
           when "UpdatedDateUTC" then expense_claim.updated_date_utc = parse_date(element.text)
-          when "Total" then expense_claim.total = BigDecimal.new(element.text)
-          when "AmountDue" then expense_claim.amount_due = BigDecimal.new(element.text)
-          when "AmountPaid" then expense_claim.amount_paid = BigDecimal.new(element.text)
+          when "Total" then expense_claim.total = BigDecimal(element.text)
+          when "AmountDue" then expense_claim.amount_due = BigDecimal(element.text)
+          when "AmountPaid" then expense_claim.amount_paid = BigDecimal(element.text)
           when "PaymentDueDate" then expense_claim.payment_due_date = parse_date(element.text)
           when "ReportingDate" then expense_claim.reporting_date = parse_date(element.text)
         end
